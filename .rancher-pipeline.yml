@@ -3,15 +3,26 @@ stages:
   steps:
   - runScriptConfig:
       image: maven:3-jdk-7
-      shellScript: |-
-        mvn clean install
+      shellScript: mvn clean install
+  when:
+    event:
+      include:
+      - tag
 - name: Publish
   steps:
   - publishImageConfig:
       dockerfilePath: ./Dockerfile
       buildContext: .
       tag: example-greenhouse:${CICD_EXECUTION_SEQUENCE}
+  when:
+    event:
+      include:
+      - tag
 - name: Deploy
   steps:
   - applyYamlConfig:
       path: ./deployment.yaml
+  when:
+    event:
+      include:
+      - tag
